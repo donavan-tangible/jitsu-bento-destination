@@ -109,3 +109,9 @@ nano docker-compose.yaml
 ```bash
 yarn build && yarn validate-config -c config.json
 ```
+
+
+### publish
+```bash
+npm publish --access=public
+```

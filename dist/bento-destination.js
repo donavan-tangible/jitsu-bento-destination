@@ -75,7 +75,7 @@ const validator = async (config) => {
         },
         body: data
     });
-    if (res.headers?.get('Content-Type') === "text/plain; charset=utf-8") {
+    if (res.headers?.get('Content-Type') === "application/json; charset=utf-8") {
         if (res.status === 201) {
             return { ok: true };
         }
@@ -122,4 +122,4 @@ exports.descriptor = descriptor;
 exports.destination = destination;
 exports.validator = validator;
 
-exports.buildInfo = {sdkVersion: "0.7.5", sdkPackage: "jitsu-cli", buildTimestamp: "2022-08-30T00:48:02.365Z"}
+exports.buildInfo = {sdkVersion: "0.7.5", sdkPackage: "jitsu-cli", buildTimestamp: "2022-09-01T17:51:49.939Z"}

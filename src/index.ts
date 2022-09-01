@@ -23,7 +23,7 @@ const validator: ConfigValidator<BentoDestinationConfig> = async (config) => {
         body: data
     });
 
-    if (res.headers?.get('Content-Type') === "text/plain; charset=utf-8") {
+    if (res.headers?.get('Content-Type') === "application/json; charset=utf-8") {
         if (res.status === 201) {
             return {ok: true}
         } else {
