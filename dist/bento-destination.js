@@ -3,45 +3,54 @@
 Object.defineProperties(exports, { __esModule: { value: true }, [Symbol.toStringTag]: { value: 'Module' } });
 
 const JitsuBento = (event, dstContext) => {
-    const context = event.eventn_ctx || event;
+    const payload = event.eventn_ctx || event;
     const config = dstContext.config;
     function getEventType($) {
         switch ($.event_type) {
-            case "pageview":
-                return "pageview";
-            //case "user_identify":
-            //case "identify":
-            //    return "$identify";
-            //case "page":
-            //case "site_page":
-            //    return "site_page";
+            case "bentonow":
+                return "bentonow";
             default:
-                return $.event_type;
+                return "bentonow"; // default
         }
     }
     const eventType = getEventType(event);
     let envelops = [];
-    // Remove JITSU fields
-    if (context.JITSU_ENVELOP) {
-        delete context["JITSU_ENVELOP"];
-    }
-    if (context.__HTTP_CONTEXT__) {
-        delete context["__HTTP_CONTEXT__"];
-    }
-    if (config.anonymous) {
-        context.source_ip = "000.000.000.000"; // mask ip
-        context.ids.ga = "undefined"; // mask ga
-    }
-    //on pageview
-    if (eventType === "pageview") {
-        context.name = eventType;
-        // Add screen resolution
-        var regex_firstDigits = /\d*/;
-        if (typeof context.screen_resolution !== "undefined") {
-            var m = context.screen_resolution.match(regex_firstDigits);
-            if (m) {
-                context.screen_width = m[0];
-            }
+    // Bentonow default event
+    if (eventType === "bentonow") {
+        // Remove JITSU properties
+        if (payload.JITSU_ENVELOP) {
+            delete payload["JITSU_ENVELOP"];
+        }
+        if (payload.__HTTP_CONTEXT__) {
+            delete payload["__HTTP_CONTEXT__"];
+        }
+        // TODO: The anonymous logic could be better...
+        if (config.anonymous) {
+            payload.source_ip = "000.000.000.000"; // mask ip
+            payload.email = "anonymous@anonymous.anonymous"; // mask email with an anonymous email (email is required by bentonow)
+        }
+        // Date
+        if (payload.hasOwnProperty('timestamp')) {
+            payload.date = payload.timestamp;
+        }
+        else if (!payload.hasOwnProperty('date')) {
+            payload.date = new Date(Date.now());
+        }
+        // Email
+        if (!payload.hasOwnProperty('email')) {
+            payload.email = "undefined@undefined.undefined";
+        }
+        // Event type
+        if (!payload.hasOwnProperty('type')) {
+            payload.type = "undefined";
+        }
+        // Fields
+        if (!payload.hasOwnProperty('fields')) {
+            payload.fields = {};
+        }
+        // Details
+        if (!payload.hasOwnProperty('details')) {
+            payload.details = {};
         }
         envelops.push({
             url: "https://track.bentonow.com/webhooks/" + config.site_key + "/" + config.your_integration_name + "/track",
@@ -49,7 +58,7 @@ const JitsuBento = (event, dstContext) => {
             headers: {
                 "Content-Type": "application/json"
             },
-            body: context
+            body: payload
         });
     }
     return envelops;
@@ -122,4 +131,4 @@ exports.descriptor = descriptor;
 exports.destination = destination;
 exports.validator = validator;
 
-exports.buildInfo = {sdkVersion: "0.7.5", sdkPackage: "jitsu-cli", buildTimestamp: "2022-09-01T17:51:49.939Z"}
+exports.buildInfo = {sdkVersion: "0.7.5", sdkPackage: "jitsu-cli", buildTimestamp: "2022-09-02T21:05:43.669Z"}

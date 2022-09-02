@@ -1,4 +1,4 @@
-import {JitsuBento, BentoDestinationConfig} from "./bento-destination";
+import {JitsuBento, BentoDestinationConfig} from "./bentonow-destination";
 import {ConfigValidator, DestinationFunction, ExtensionDescriptor} from "@jitsu/types/extension";
 
 const destination: DestinationFunction = JitsuBento
